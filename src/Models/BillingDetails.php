@@ -35,9 +35,9 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class BillingDetails extends AModel
 {
-    const SALUTATION_MALE = 'MALE';
-    const SALUTATION_FEMALE = 'FEMALE';
-    const SALUTATION_UNKNOWN = 'UNKNOWN';
+    public const SALUTATION_MALE = 'MALE';
+    public const SALUTATION_FEMALE = 'FEMALE';
+    public const SALUTATION_UNKNOWN = 'UNKNOWN';
 
     /**
      * The salutation of the customer.

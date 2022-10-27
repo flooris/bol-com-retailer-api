@@ -17,8 +17,8 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class InvalidReplenishmentLine extends AModel
 {
-    const TYPE_UNKNOWN_FBB_PRODUCT = 'UNKNOWN_FBB_PRODUCT';
-    const TYPE_UNKNOWN_EAN_INVENTORY_RELATION = 'UNKNOWN_EAN_INVENTORY_RELATION';
+    public const TYPE_UNKNOWN_FBB_PRODUCT = 'UNKNOWN_FBB_PRODUCT';
+    public const TYPE_UNKNOWN_EAN_INVENTORY_RELATION = 'UNKNOWN_EAN_INVENTORY_RELATION';
 
     /**
      * Type of invalid replenishment line, in case the BSKU and/or EAN cannot be

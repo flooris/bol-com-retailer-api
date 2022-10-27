@@ -5,7 +5,7 @@ namespace HarmSmits\BolComClient\Models;
 /**
  * @method null|string getProductTitle()
  * @method self setProductTitle(string $productTitle)
- * @method CountryCode[] getVisible()
+ * @method OffersCountryCode[] getVisible()
  */
 final class Store extends AModel
 {
@@ -15,8 +15,8 @@ final class Store extends AModel
      */
     protected ?string $productTitle = null;
 
-    /** @var CountryCode[] */
-    protected array $visible = [];
+	/** @var OffersCountryCode[] */
+	protected array $visible = [];
 
     /**
      * @param CountryCode[] $visible

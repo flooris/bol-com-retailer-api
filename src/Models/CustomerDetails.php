@@ -3,8 +3,7 @@
 namespace HarmSmits\BolComClient\Models;
 
 /**
- * @method null|string getSalutationCode()
- * @method self setSalutationCode(string $salutationCode)
+ * @method null|string getSalutation()
  * @method null|string getFirstName()
  * @method self setFirstName(string $firstName)
  * @method null|string getSurname()
@@ -13,8 +12,8 @@ namespace HarmSmits\BolComClient\Models;
  * @method self setStreetName(string $streetName)
  * @method null|string getHouseNumber()
  * @method self setHouseNumber(string $houseNumber)
- * @method null|string getHouseNumberExtended()
- * @method self setHouseNumberExtended(string $houseNumberExtended)
+ * @method null|string getHouseNumberExtension()
+ * @method self setHouseNumberExtension(string $houseNumberExtension)
  * @method null|string getExtraAddressInformation()
  * @method self setExtraAddressInformation(string $extraAddressInformation)
  * @method null|string getZipCode()
@@ -34,88 +33,102 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class CustomerDetails extends AModel
 {
-    /**
-     * The salutation of the customer.
-     * @var string
-     */
-    protected ?string $salutationCode = null;
+	public const SALUTATION_MALE = 'MALE';
+	public const SALUTATION_FEMALE = 'FEMALE';
+	public const SALUTATION_UNKNOWN = 'UNKNOWN';
 
-    /**
-     * The first name of the customer.
-     * @var string
-     */
-    protected ?string $firstName = null;
+	/**
+	 * The salutation of the customer.
+	 * @var string
+	 */
+	protected string $salutation;
 
-    /**
-     * The surname of the customer.
-     * @var string
-     */
-    protected ?string $surname = null;
+	/**
+	 * The first name of the customer.
+	 * @var string
+	 */
+	protected ?string $firstName = null;
 
-    /**
-     * The street name.
-     * @var string
-     */
-    protected ?string $streetName = null;
+	/**
+	 * The surname of the customer.
+	 * @var string
+	 */
+	protected ?string $surname = null;
 
-    /**
-     * The house number.
-     * @var string
-     */
-    protected ?string $houseNumber = null;
+	/**
+	 * The street name.
+	 * @var string
+	 */
+	protected ?string $streetName = null;
 
-    /**
-     * The extension on the house number.
-     * @var string
-     */
-    protected ?string $houseNumberExtended = null;
+	/**
+	 * The house number.
+	 * @var string
+	 */
+	protected ?string $houseNumber = null;
 
-    /**
-     * Additional information related to the address that helps in delivering the package.
-     * @var string
-     */
-    protected ?string $extraAddressInformation = null;
+	/**
+	 * The extension on the house number.
+	 * @var string
+	 */
+	protected ?string $houseNumberExtension = null;
 
-    /**
-     * The ZIP code in '1234AB' format for NL orders and '0000' format for BE orders.
-     * @var string
-     */
-    protected ?string $zipCode = null;
+	/**
+	 * Additional information related to the address that helps in delivering the package.
+	 * @var string
+	 */
+	protected ?string $extraAddressInformation = null;
 
-    /**
-     * The name of the city.
-     * @var string
-     */
-    protected ?string $city = null;
+	/**
+	 * The ZIP code in '1234AB' format for NL orders and '0000' format for BE orders.
+	 * @var string
+	 */
+	protected ?string $zipCode = null;
 
-    /**
-     * The country code.
-     * @var string
-     */
-    protected ?string $countryCode = null;
+	/**
+	 * The name of the city.
+	 * @var string
+	 */
+	protected ?string $city = null;
 
-    /**
-     * A scrambled email address that can be used to contact the customer.
-     * @var string
-     */
-    protected ?string $email = null;
+	/**
+	 * The country code.
+	 * @var string
+	 */
+	protected ?string $countryCode = null;
 
-    /**
-     * The delivery phone number of the customer. Filled in case the order requires an appointment for delivering the
-     * goods.
-     * @var string
-     */
-    protected ?string $deliveryPhoneNumber = null;
+	/**
+	 * A scrambled email address that can be used to contact the customer.
+	 * @var string
+	 */
+	protected ?string $email = null;
 
-    /**
-     * The company name.
-     * @var string
-     */
-    protected ?string $company = null;
+	/**
+	 * The delivery phone number of the customer. Filled in case the order requires an appointment for delivering the goods.
+	 * @var string
+	 */
+	protected ?string $deliveryPhoneNumber = null;
 
-    /**
-     * The Value Added Tax (VAT) / BTW number for business sellers situated in the Netherlands.
-     * @var string
-     */
-    protected ?string $vatNumber = null;
+	/**
+	 * The company name.
+	 * @var string
+	 */
+	protected ?string $company = null;
+
+	/**
+	 * The Value Added Tax (VAT) / BTW number for business sellers situated in the Netherlands.
+	 * @var string
+	 */
+	protected ?string $vatNumber = null;
+
+	public function setSalutation(string $salutation): self
+	{
+		$this->_checkEnumBounds($salutation, [
+			"MALE",
+			"FEMALE",
+			"UNKNOWN",
+		]);
+		$this->salutation = $salutation;
+		return $this;
+	}
 }

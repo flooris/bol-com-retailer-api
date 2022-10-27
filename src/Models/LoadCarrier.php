@@ -14,12 +14,12 @@ use DateTime;
  */
 final class LoadCarrier extends AModel
 {
-    const TRANSPORT_STATE_ANNOUNCED = 'ANNOUNCED';
-    const TRANSPORT_STATE_PICKED_UP = 'PICKED_UP';
-    const TRANSPORT_STATE_UNDERWAY = 'UNDERWAY';
-    const TRANSPORT_STATE_DELAYED = 'DELAYED';
-    const TRANSPORT_STATE_ARRIVED = 'ARRIVED';
-    const TRANSPORT_STATE_ERROR = 'ERROR';
+    public const TRANSPORT_STATE_ANNOUNCED = 'ANNOUNCED';
+    public const TRANSPORT_STATE_PICKED_UP = 'PICKED_UP';
+    public const TRANSPORT_STATE_UNDERWAY = 'UNDERWAY';
+    public const TRANSPORT_STATE_DELAYED = 'DELAYED';
+    public const TRANSPORT_STATE_ARRIVED = 'ARRIVED';
+    public const TRANSPORT_STATE_ERROR = 'ERROR';
 
     /**
      * The Serial Shipping Container Code (SSCC) for this load carrier.

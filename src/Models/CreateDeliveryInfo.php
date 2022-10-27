@@ -9,12 +9,12 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class CreateDeliveryInfo extends AModel
 {
-    const TRANSPORTER_CODE_POSTNL = 'POSTNL';
-    const TRANSPORTER_CODE_DHL = 'DHL';
-    const TRANSPORTER_CODE_DPD = 'DPD';
-    const TRANSPORTER_CODE_GLS = 'GLS';
-    const TRANSPORTER_CODE_UPS = 'UPS';
-    const TRANSPORTER_CODE_OTHER = 'OTHER';
+    public const TRANSPORTER_CODE_POSTNL = 'POSTNL';
+    public const TRANSPORTER_CODE_DHL = 'DHL';
+    public const TRANSPORTER_CODE_DPD = 'DPD';
+    public const TRANSPORTER_CODE_GLS = 'GLS';
+    public const TRANSPORTER_CODE_UPS = 'UPS';
+    public const TRANSPORTER_CODE_OTHER = 'OTHER';
 
     /**
      * The expected delivery date of the shipment at the bol.com warehouse. In ISO 8601 format.

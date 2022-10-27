@@ -26,12 +26,12 @@ use DateTime;
  */
 final class ReplenishmentResponse extends AModel
 {
-    const STATE_ANNOUNCED = 'ANNOUNCED';
-    const STATE_IN_TRANSIT = 'IN_TRANSIT';
-    const STATE_ARRIVED_AT_WH = 'ARRIVED_AT_WH';
-    const STATE_IN_PROGRESS_AT_WH = 'IN_PROGRESS_AT_WH';
-    const STATE_CANCELLED = 'CANCELLED';
-    const STATE_DONE = 'DONE';
+    public const STATE_ANNOUNCED = 'ANNOUNCED';
+    public const STATE_IN_TRANSIT = 'IN_TRANSIT';
+    public const STATE_ARRIVED_AT_WH = 'ARRIVED_AT_WH';
+    public const STATE_IN_PROGRESS_AT_WH = 'IN_PROGRESS_AT_WH';
+    public const STATE_CANCELLED = 'CANCELLED';
+    public const STATE_DONE = 'DONE';
 
     /**
      * The unique identifier of the replenishment.

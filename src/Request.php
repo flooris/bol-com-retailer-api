@@ -2,10 +2,20 @@
 
 namespace HarmSmits\BolComClient;
 
+use HarmSmits\BolComClient\Models\CreateAdGroupRequest;
+use HarmSmits\BolComClient\Models\UpdateAdGroupRequest;
+use HarmSmits\BolComClient\Models\CreateKeywordRequest;
+use HarmSmits\BolComClient\Models\UpdateKeywordRequest;
 use HarmSmits\BolComClient\Models\BulkCommissionRequest;
+use HarmSmits\BolComClient\Models\CreateCampaignRequest;
+use HarmSmits\BolComClient\Models\UpdateCampaignRequest;
+use HarmSmits\BolComClient\Models\CreateTargetProductRequest;
+use HarmSmits\BolComClient\Models\UpdateTargetProductRequest;
 use HarmSmits\BolComClient\Models\CreateProductContentRequest;
 use HarmSmits\BolComClient\Models\CreateOfferRequest;
 use HarmSmits\BolComClient\Models\CreateOfferExportRequest;
+use HarmSmits\BolComClient\Models\CreateNegativeKeywordRequest;
+use HarmSmits\BolComClient\Models\CreateProductContentSingleRequest;
 use HarmSmits\BolComClient\Models\CreateUnpublishedOfferReportRequest;
 use HarmSmits\BolComClient\Models\UpdateOfferRequest;
 use HarmSmits\BolComClient\Models\UpdateOfferPriceRequest;
@@ -24,6 +34,7 @@ use HarmSmits\BolComClient\Models\DeliveryOptionsRequest;
 use HarmSmits\BolComClient\Models\CreateSubscriptionRequest;
 use HarmSmits\BolComClient\Models\UpdateSubscriptionRequest;
 use HarmSmits\BolComClient\Models\ChangeTransportRequest;
+use HarmSmits\BolComClient\Models\ContainerForTheOrderItemsThatHaveToBeCancelled;
 
 class Request
 {
@@ -31,20 +42,19 @@ class Request
      * Gets all commissions and possible reductions by EAN, price, and optionally condition.
      *
      * @param BulkCommissionRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function getCommissions(BulkCommissionRequest $body): array
+    public function postCommission(BulkCommissionRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/commission";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -84,6 +94,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -96,10 +107,9 @@ class Request
      * @param string $condition The condition of the offer.
      * @param int    $unitPrice The price of the product with a period as a decimal separator. The price should always
      *                          have two decimals precision.
-     *
      * @return array
      */
-    public function getCommission(string $ean, string $condition, int $unitPrice): array
+    public function getCommissionByEan(string $ean, string $condition, int $unitPrice): array
     {
         $data                        = [];
         $url                         = "https://api.bol.com/retailer/commission/{ean}";
@@ -109,7 +119,7 @@ class Request
         $data["query"]["condition"]  = $condition;
         $data["query"]["unit-price"] = $unitPrice;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                    = [
             200 =>
@@ -144,28 +154,28 @@ class Request
                 ],
         ];
         $data                        = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Create content for existing products or new products.
+     * Create content for an existing product.
      *
-     * @param CreateProductContentRequest $body
-     *
+     * @param CreateProductContentSingleRequest $body
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createProductContent(CreateProductContentRequest $body): array
+    public function postContentProducts(CreateProductContentSingleRequest $body): array
     {
         $data            = [];
-        $url             = "https://api.bol.com/retailer/content/product";
+        $url             = "https://api.bol.com/retailer/content/products";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -190,45 +200,45 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Retrieve a validation report of the product content upload based on the upload id.
+     * Gets the upload report of the product content submitted by upload id.
      *
-     * @param string $uploadId The identifier of the product content upload.
-     *
+     * @param string $uploadId The identifier of the upload report.
      * @return array
      */
-    public function getContentValidationReport(string $uploadId): array
+    public function getContentUploadReportByUploadId(string $uploadId): array
     {
         $data            = [];
-        $url             = "https://api.bol.com/retailer/content/validation-report/{uploadId}";
+        $url             = "https://api.bol.com/retailer/content/upload-report/{upload-id}";
         $method          = "get";
-        $url             = str_replace("{uploadId}", $uploadId, $url);
+        $url             = str_replace("{upload-id}", $uploadId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
                 [
-                    '$type'           => 'OBJ',
-                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\ValidationReportResponse',
-                    'productContents' =>
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\UploadReportResponse',
+                    'attributes' =>
                         [
-                            '$type'              => 'OBJ_ARRAY',
-                            '$ref'               => 'HarmSmits\\BolComClient\\Models\\ProductContentResponse',
-                            'rejectedAttributes' =>
+                            '$type'  => 'OBJ_ARRAY',
+                            '$ref'   => 'HarmSmits\\BolComClient\\Models\\UploadReportAttribute',
+                            'values' =>
                                 [
-                                    '$type'           => 'OBJ_ARRAY',
-                                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\RejectedAttributeResponse',
-                                    'rejectionErrors' =>
-                                        [
-                                            '$type' => 'OBJ_ARRAY',
-                                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\RejectionError',
-                                        ],
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\UploadReportValue',
                                 ],
+                        ],
+                    'assets'     =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\UploadReportAsset',
                         ],
                 ],
             404 =>
@@ -243,6 +253,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -253,11 +264,11 @@ class Request
      * @param string $offerId         Unique identifier for an offer.
      * @param string $period          The time unit in which the offer insights are grouped.
      * @param int    $numberOfPeriods The number of periods for which the offer insights are requested back in time.
+     *                                The maximum available periods are 24 for MONTH, 104 for WEEK, and 730 for DAY.
      * @param array  $name            The name of the requested offer insight.
-     *
      * @return array
      */
-    public function getOfferInsights(string $offerId, string $period, int $numberOfPeriods, array $name): array
+    public function getInsightsOffer(string $offerId, string $period, int $numberOfPeriods, array $name): array
     {
         $data                               = [];
         $url                                = "https://api.bol.com/retailer/insights/offer";
@@ -268,7 +279,7 @@ class Request
         $data["query"]["number-of-periods"] = $numberOfPeriods;
         $data["query"]["name"]              = $name;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                           = [
             200 =>
@@ -313,6 +324,7 @@ class Request
                 ],
         ];
         $data                               = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -325,10 +337,9 @@ class Request
      * @param string $week Week number in the ISO-8601 standard. If you would like to get the relative scores from the
      *                     current week, please provide the current week number here. Be advised that measurements can
      *                     change heavily over the course of the week.
-     *
      * @return array
      */
-    public function getPerformanceIndicatorInsights(array $name, string $year, string $week): array
+    public function getInsightsPerformanceIndicator(array $name, string $year, string $week): array
     {
         $data                  = [];
         $url                   = "https://api.bol.com/retailer/insights/performance/indicator";
@@ -338,7 +349,7 @@ class Request
         $data["query"]["year"] = $year;
         $data["query"]["week"] = $week;
         $data["headers"]       = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response              = [
             200 =>
@@ -383,6 +394,7 @@ class Request
                 ],
         ];
         $data                  = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -393,10 +405,9 @@ class Request
      *
      * @param string $offerId    Unique identifier for an offer.
      * @param int    $weeksAhead The number of weeks into the future, starting from today.
-     *
      * @return array
      */
-    public function getSalesForecastInsights(string $offerId, int $weeksAhead): array
+    public function getInsightsSalesForecast(string $offerId, int $weeksAhead): array
     {
         $data                         = [];
         $url                          = "https://api.bol.com/retailer/insights/sales-forecast";
@@ -405,7 +416,7 @@ class Request
         $data["query"]["offer-id"]    = $offerId;
         $data["query"]["weeks-ahead"] = $weeksAhead;
         $data["headers"]              = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                     = [
             200 =>
@@ -450,6 +461,7 @@ class Request
                 ],
         ];
         $data                         = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -463,15 +475,10 @@ class Request
      * @param string $period             The time unit in which the offer insights are grouped.
      * @param int    $numberOfPeriods    The number of periods for which the offer insights are requested back in time.
      * @param bool   $relatedSearchTerms Indicates whether or not you want to retrieve the related search terms.
-     *
      * @return array
      */
-    public function getSearchTermsInsights(
-        string $searchTerm,
-        string $period,
-        int $numberOfPeriods,
-        bool $relatedSearchTerms = true
-    ): array {
+    public function getInsightsSearchTerms(string $searchTerm, string $period, int $numberOfPeriods, bool $relatedSearchTerms): array
+    {
         $data                                  = [];
         $url                                   = "https://api.bol.com/retailer/insights/search-terms";
         $method                                = "get";
@@ -481,7 +488,7 @@ class Request
         $data["query"]["number-of-periods"]    = $numberOfPeriods;
         $data["query"]["related-search-terms"] = $relatedSearchTerms;
         $data["headers"]                       = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                              = [
             200 =>
@@ -531,13 +538,15 @@ class Request
                 ],
         ];
         $data                                  = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
      * The inventory endpoint is a specific LVB/FBB endpoint. It provides a paginated list containing your fulfilment
-     * by bol.com inventory. This endpoint does not provide information about your own stock.
+     * by
+     * bol.com inventory. This endpoint does not provide information about your own stock.
      *
      * @param int    $page     The requested page number with a page size of 50 items.
      * @param array  $quantity Filter inventory by providing a range of quantity (min-range)-(max-range). Note that if
@@ -546,16 +555,10 @@ class Request
      * @param string $stock    Filter inventory by stock level.
      * @param string $state    Filter inventory by stock type.
      * @param string $query    Filter inventory by EAN or product title.
-     *
      * @return array
      */
-    public function getInventory(
-        int $page = 1,
-        ?array $quantity = null,
-        ?string $stock = null,
-        ?string $state = null,
-        ?string $query = null
-    ): array {
+    public function getInventory(int $page = null, array $quantity = null, string $stock = null, string $state = null, string $query = null): array
+    {
         $data                      = [];
         $url                       = "https://api.bol.com/retailer/inventory";
         $method                    = "get";
@@ -566,7 +569,7 @@ class Request
         $data["query"]["state"]    = $state;
         $data["query"]["query"]    = $query;
         $data["headers"]           = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                  = [
             200 =>
@@ -591,6 +594,7 @@ class Request
                 ],
         ];
         $data                      = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -605,10 +609,9 @@ class Request
      *
      * @param string $periodStartDate Period start date in ISO 8601 standard.
      * @param string $periodEndDate   Period end date in ISO 8601 standard.
-     *
      * @return array
      */
-    public function getInvoices(?string $periodStartDate = null, ?string $periodEndDate = null): array
+    public function getInvoices(string $periodStartDate, string $periodEndDate): array
     {
         $data                               = [];
         $url                                = "https://api.bol.com/retailer/invoices";
@@ -617,7 +620,7 @@ class Request
         $data["query"]["period-start-date"] = $periodStartDate;
         $data["query"]["period-end-date"]   = $periodEndDate;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                           = [
             400 =>
@@ -632,27 +635,27 @@ class Request
                 ],
         ];
         $data                               = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
      * Gets an invoice by invoice id. The available media types differ per invoice and are listed within the response
-     * from the ‘GET all invoices’ call. Note: the media types listed in the response must be given in our standard
-     * API format.
+     * from the
+     * ‘GET all invoices’ call. Note: the media types listed in the response must be given in our standard API format.
      *
      * @param string $invoiceId The id of the invoice
-     *
      * @return array
      */
-    public function getInvoice(string $invoiceId): array
+    public function getInvoicesByInvoiceId(string $invoiceId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/invoices/{invoice-id}";
         $method          = "get";
         $url             = str_replace("{invoice-id}", $invoiceId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             400 =>
@@ -667,6 +670,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -678,10 +682,9 @@ class Request
      *
      * @param string $invoiceId The id of the invoice.
      * @param int    $page      The page to get, defaults to page 1. Each page contains a maximum of 25,000 lines.
-     *
      * @return array
      */
-    public function getInvoiceSpecifications(string $invoiceId, int $page = 1): array
+    public function getInvoicesByInvoiceIdSpecification(string $invoiceId, int $page = 1): array
     {
         $data                  = [];
         $url                   = "https://api.bol.com/retailer/invoices/{invoice-id}/specification";
@@ -690,7 +693,7 @@ class Request
         $data["query"]         = [];
         $data["query"]["page"] = $page;
         $data["headers"]       = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response              = [
             400 =>
@@ -703,8 +706,19 @@ class Request
                             '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
                         ],
                 ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
         ];
         $data                  = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -714,20 +728,19 @@ class Request
      * if the offer is valid and published to the shop.
      *
      * @param CreateOfferRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createOffer(CreateOfferRequest $body): array
+    public function postOffers(CreateOfferRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -752,6 +765,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -760,20 +774,19 @@ class Request
      * Request an offer export file containing all offers.
      *
      * @param CreateOfferExportRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createOfferExport(CreateOfferExportRequest $body): array
+    public function postOffersExport(CreateOfferExportRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/export";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -797,7 +810,8 @@ class Request
                         ],
                 ],
         ];
-        $data = $this->recursiveArrayFilter($data);
+        $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -806,17 +820,16 @@ class Request
      * Retrieve an offer export file containing all offers.
      *
      * @param string $reportId Unique identifier for an offer export report.
-     *
      * @return array
      */
-    public function getOfferExport(string $reportId): array
+    public function getOffersExportByReportId(string $reportId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/export/{report-id}";
         $method          = "get";
         $url             = str_replace("{report-id}", $reportId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+csv',
+            'Accept' => 'application/vnd.retailer.v7+csv',
         ];
         $response        = [
             400 =>
@@ -841,95 +854,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
-        return [$method, $url, $data, $response];
-    }
 
-
-    /**
-     * Request an unpublished offer report containing all unpublished offers and reasons.
-     *
-     * @param CreateUnpublishedOfferReportRequest $body
-     *
-     * @return array
-     *
-     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
-     */
-    public function createUnpublishedOfferReport(CreateUnpublishedOfferReportRequest $body): array
-    {
-        $data            = [];
-        $url             = "https://api.bol.com/retailer/offers/unpublished";
-        $method          = "post";
-        $data["body"]    = json_encode($body->__toArray());
-        $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v6+json',
-            'Content-Type' => 'application/vnd.retailer.v6+json',
-        ];
-        $response        = [
-            202 =>
-                [
-                    '$type' => 'OBJ',
-                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
-                    'links' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
-                        ],
-                ],
-            400 =>
-                [
-                    '$type'      => 'OBJ',
-                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
-                    'violations' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
-                        ],
-                ],
-        ];
-        $data            = $this->recursiveArrayFilter($data);
-        return [$method, $url, $data, $response];
-    }
-
-
-    /**
-     * Retrieve an unpublished offer report containing all unpublished offers and reasons.
-     *
-     * @param string $reportId Unique identifier for unpublished offer report.
-     *
-     * @return array
-     */
-    public function getUnpublishedOfferReport(string $reportId): array
-    {
-        $data            = [];
-        $url             = "https://api.bol.com/retailer/offers/unpublished/{report-id}";
-        $method          = "get";
-        $url             = str_replace("{report-id}", $reportId, $url);
-        $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v6+csv',
-        ];
-        $response        = [
-            400 =>
-                [
-                    '$type'      => 'OBJ',
-                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
-                    'violations' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
-                        ],
-                ],
-            404 =>
-                [
-                    '$type'      => 'OBJ',
-                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
-                    'violations' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
-                        ],
-                ],
-        ];
-        $data            = $this->recursiveArrayFilter($data);
         return [$method, $url, $data, $response];
     }
 
@@ -938,17 +863,16 @@ class Request
      * Retrieve an offer by using the offer id provided to you when creating or listing your offers.
      *
      * @param string $offerId Unique identifier for an offer.
-     *
      * @return array
      */
-    public function getOffer(string $offerId): array
+    public function getOffersByOfferId(string $offerId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/{offer-id}";
         $method          = "get";
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -982,7 +906,7 @@ class Request
                             'visible' =>
                                 [
                                     '$type' => 'OBJ_ARRAY',
-                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\CountryCode',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\OffersCountryCode',
                                 ],
                         ],
                     'condition'             =>
@@ -1008,6 +932,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1017,12 +942,11 @@ class Request
      *
      * @param string             $offerId Unique identifier for an offer.
      * @param UpdateOfferRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateOffer(string $offerId, UpdateOfferRequest $body): array
+    public function putOffersByOfferId(string $offerId, UpdateOfferRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/{offer-id}";
@@ -1030,8 +954,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1056,6 +980,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1064,17 +989,16 @@ class Request
      * Delete an offer by id.
      *
      * @param string $offerId Unique identifier for an offer.
-     *
      * @return array
      */
-    public function deleteOffer(string $offerId): array
+    public function deleteOffersByOfferId(string $offerId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/{offer-id}";
         $method          = "delete";
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1099,6 +1023,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1108,12 +1033,11 @@ class Request
      *
      * @param string                  $offerId Unique identifier for an offer.
      * @param UpdateOfferPriceRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateOfferPrice(string $offerId, UpdateOfferPriceRequest $body): array
+    public function putOffersByOfferIdPrice(string $offerId, UpdateOfferPriceRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/{offer-id}/price";
@@ -1121,8 +1045,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1147,6 +1071,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1156,12 +1081,11 @@ class Request
      *
      * @param string                  $offerId Unique identifier for an offer.
      * @param UpdateOfferStockRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateOfferStock(string $offerId, UpdateOfferStockRequest $body): array
+    public function putOffersByOfferIdStock(string $offerId, UpdateOfferStockRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/offers/{offer-id}/stock";
@@ -1169,8 +1093,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1195,20 +1119,19 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Gets a paginated list of all orders sorted by date in descending order. To create a pick list you can set state
-     * to open.
+     * Gets a paginated list of all orders for a retailer.
      *
      * @param int    $page             The requested page number with a page size of 50 items.
      * @param string $fulfilmentMethod The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled by bol.com
      *                                 (FBB).
      * @param string $status           Determines whether you want to retrieve orders including or excluding shipped
      *                                 and/or cancelled items.
-     *
      * @return array
      */
     public function getOrders(?int $page = null, ?string $fulfilmentMethod = null, ?string $status = null): array
@@ -1221,7 +1144,7 @@ class Request
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["query"]["status"]            = $status;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                           = [
             200 =>
@@ -1241,6 +1164,7 @@ class Request
                 ],
         ];
         $data                               = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1249,21 +1173,20 @@ class Request
      * This endpoint can be used to either confirm a cancellation request by the customer or to cancel an order item you
      * yourself are unable to fulfil.
      *
-     * @param CancelOrderItemsRequest $body
-     *
+     * @param ContainerForTheOrderItemsThatHaveToBeCancelled $body
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function cancelOrderItems(CancelOrderItemsRequest $body): array
+    public function putOrdersCancellation(ContainerForTheOrderItemsThatHaveToBeCancelled $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/orders/cancellation";
         $method          = "put";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1288,30 +1211,31 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Ship a single order item within a customer order by providing shipping information. In case you purchased a
-     * shipping label you can add the shippingLabelId to this message; in that case the transport element must be left
-     * empty. If you ship the item(s) using your own transporter method you must omit the shippingLabelId entirely.
+     * Ship a single order item within a customer order by providing shipping information. If you purchased a shipping
+     * label you should add the shippingLabelId to this message and leave the transport element empty. If you will ship
+     * the item using your own transporter method you must omit the shippingLabelId entirely and fill in the transport
+     * element with the fields from GET shipping labels.
      *
      * @param ShipmentRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateShipment(ShipmentRequest $body): array
+    public function putOrdersShipment(ShipmentRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/orders/shipment";
         $method          = "put";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1336,26 +1260,26 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Gets an order by order id. The order can be partially shipped or cancelled, the message contains the quantity
-     * shipped or cancelled items.
+     * Gets an order by order id. The order can be partially shipped or cancelled, and the message contains the quantity
+     * shipped or cancelled items. The unitPrice takes account of volume discounts.
      *
      * @param string $orderId The id of the order to get.
-     *
      * @return array
      */
-    public function getOrder(string $orderId): array
+    public function getOrdersByOrderId(string $orderId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/orders/{order-id}";
         $method          = "get";
         $url             = str_replace("{order-id}", $orderId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -1410,49 +1334,47 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Retrieve a list of process statuses, which shows information regarding previously executed PUT/POST/DELETE
-     * requests in descending order. You need to supply an entity id and event type.Please note: process status
-     * instances are only retained for a limited period of time after completion. Outside of this period, deleted
-     * process statuses will no longer be returned. Please handle this accordingly, by stopping any active polling for
-     * these statuses.
+     * Gets a paginated list of all promotions for a retailer.
      *
-     * @param string $entityId  The entity id is not unique so you need to provide an event type. The entity id can
-     *                          either be order item id, transport id, return number or inbound reference.
-     * @param string $eventType The event type can only be used in combination with the entity id.
-     * @param int    $page      The requested page number with a page size of 50 items.
-     *
+     * @param array $promotionType The type(s) of promotion to be retrieved.
+     * @param int   $page          The requested page number with a page size of 50 items.
      * @return array
      */
-    public function getProcessStatus(string $entityId, string $eventType, ?int $page = null): array
+    public function getPromotions(array $promotionType, ?int $page = null): array
     {
-        $data                        = [];
-        $url                         = "https://api.bol.com/retailer/process-status";
-        $method                      = "get";
-        $data["query"]               = [];
-        $data["query"]["entity-id"]  = $entityId;
-        $data["query"]["event-type"] = $eventType;
-        $data["query"]["page"]       = $page;
-        $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+        $data                            = [];
+        $url                             = "https://api.bol.com/retailer/promotions";
+        $method                          = "get";
+        $data["query"]                   = [];
+        $data["query"]["promotion-type"] = $promotionType;
+        $data["query"]["page"]           = $page;
+        $data["headers"]                 = [
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
-        $response                    = [
+        $response                        = [
             200 =>
                 [
-                    '$type'           => 'OBJ',
-                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\ProcessStatusResponse',
-                    'processStatuses' =>
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Promotions',
+                    'promotions' =>
                         [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
-                            'links' =>
+                            '$type'     => 'OBJ_ARRAY',
+                            '$ref'      => 'HarmSmits\\BolComClient\\Models\\ReducedPromotion',
+                            'countries' =>
                                 [
                                     '$type' => 'OBJ_ARRAY',
-                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\PromotionCountryCode',
+                                ],
+                            'campaign'  =>
+                                [
+                                    '$type' => 'OBJ',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Campaign',
                                 ],
                         ],
                 ],
@@ -1467,97 +1389,51 @@ class Request
                         ],
                 ],
         ];
-        $data                        = $this->recursiveArrayFilter($data);
+        $data                            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Retrieve a list of process statuses, which shows information regarding previously executed PUT/POST/DELETE
-     * requests. No more than 1000 process status id's can be sent in a single request.Please note: process status
-     * instances are only retained for a limited period of time after completion. Outside of this period, deleted
-     * process statuses will no longer be returned. Please handle this accordingly, by stopping any active polling for
-     * these statuses.
+     * Gets the details of a promotion.
      *
-     * @param BulkProcessStatusRequest $body
-     *
-     * @return array
-     *
-     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
-     */
-    public function getBulkProcessStatus(BulkProcessStatusRequest $body): array
-    {
-        $data            = [];
-        $url             = "https://api.bol.com/retailer/process-status";
-        $method          = "post";
-        $data["body"]    = json_encode($body->__toArray());
-        $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
-        ];
-        $response        = [
-            200 =>
-                [
-                    '$type'           => 'OBJ',
-                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\ProcessStatusResponse',
-                    'processStatuses' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
-                            'links' =>
-                                [
-                                    '$type' => 'OBJ_ARRAY',
-                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
-                                ],
-                        ],
-                ],
-            400 =>
-                [
-                    '$type'      => 'OBJ',
-                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
-                    'violations' =>
-                        [
-                            '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
-                        ],
-                ],
-        ];
-        $data            = $this->recursiveArrayFilter($data);
-        return [$method, $url, $data, $response];
-    }
-
-
-    /**
-     * Retrieve a specific process-status, which shows information regarding a previously executed PUT/POST/DELETE
-     * request. All PUT/POST/DELETE requests on the other endpoints will supply a process-status-id in the related
-     * response. You can use this id to retrieve a status by using the endpoint below. Please note: process status
-     * instances are only retained for a limited period of time after completion. Outside of this period, a 404 will be
-     * returned for missing process statuses. Please handle this accordingly, by stopping any active polling for these
-     * statuses.
-     *
-     * @param string $processStatusId The id of the process status being requested. This id is supplied in every
-     *                                response to a PUT/POST/DELETE request on the other endpoints.
-     *
+     * @param string $promotionId The identifier of the promotion.
      * @return array
      */
-    public function getDetailedProcessStatus(string $processStatusId): array
+    public function getPromotionsByPromotionId(string $promotionId): array
     {
         $data            = [];
-        $url             = "https://api.bol.com/retailer/process-status/{process-status-id}";
+        $url             = "https://api.bol.com/retailer/promotions/{promotion-id}";
         $method          = "get";
-        $url             = str_replace("{process-status-id}", $processStatusId, $url);
+        $url             = str_replace("{promotion-id}", $promotionId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
                 [
-                    '$type' => 'OBJ',
-                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
-                    'links' =>
+                    '$type'     => 'OBJ',
+                    '$ref'      => 'HarmSmits\\BolComClient\\Models\\Promotion',
+                    'countries' =>
                         [
                             '$type' => 'OBJ_ARRAY',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\PromotionCountryCode',
+                        ],
+                    'campaign'  =>
+                        [
+                            '$type' => 'OBJ',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Campaign',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
                         ],
                 ],
             404 =>
@@ -1572,6 +1448,58 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all products that are present within a promotion.
+     *
+     * @param string $promotionId The identifier of the promotion.
+     * @param int    $page        The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getPromotionsByPromotionIdProducts(string $promotionId, ?int $page = null): array
+    {
+        $data                  = [];
+        $url                   = "https://api.bol.com/retailer/promotions/{promotion-id}/products";
+        $method                = "get";
+        $url                   = str_replace("{promotion-id}", $promotionId, $url);
+        $data["query"]         = [];
+        $data["query"]["page"] = $page;
+        $data["headers"]       = [
+            'Accept' => 'application/vnd.retailer.v7+json',
+        ];
+        $response              = [
+            200 =>
+                [
+                    '$type'    => 'OBJ',
+                    '$ref'     => 'HarmSmits\\BolComClient\\Models\\Products',
+                    'products' =>
+                        [
+                            '$type'           => 'OBJ_ARRAY',
+                            '$ref'            => 'HarmSmits\\BolComClient\\Models\\Product',
+                            'relevanceScores' =>
+                                [
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\RelevanceScore',
+                                ],
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                  = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1579,13 +1507,12 @@ class Request
     /**
      * Gets a list of replenishments.
      *
-     * @param string|null $reference Custom user defined reference to identify the replenishment.
-     * @param string|null $ean       The EAN number associated with this product.
-     * @param string|null $startDate The creation start date to find the replenishment. In ISO 8601 format.
-     * @param string|null $endDate   The end date of the range to find the replenishment. In ISO 8601 format.
-     * @param array|null  $state     The current state(s) of the replenishment.
-     * @param int|null    $page      The requested page number with a page size of 50 items.
-     *
+     * @param string $reference Custom user defined reference to identify the replenishment.
+     * @param string $ean       The EAN number associated with this product.
+     * @param string $startDate The creation start date to find the replenishment. In ISO 8601 format.
+     * @param string $endDate   The end date of the range to find the replenishment. In ISO 8601 format.
+     * @param array  $state     The current state(s) of the replenishment.
+     * @param int    $page      The requested page number with a page size of 50 items.
      * @return array
      */
     public function getReplenishments(
@@ -1593,9 +1520,10 @@ class Request
         ?string $ean = null,
         ?string $startDate = null,
         ?string $endDate = null,
-        ?array $state = null,
-        ?int $page = null
-    ): array {
+        ?array  $state = null,
+        ?int    $page = null
+    ): array
+    {
         $data                        = [];
         $url                         = "https://api.bol.com/retailer/replenishments";
         $method                      = "get";
@@ -1607,7 +1535,7 @@ class Request
         $data["query"]["state"]      = $state;
         $data["query"]["page"]       = $page;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                    = [
             200 =>
@@ -1642,28 +1570,28 @@ class Request
                 ],
         ];
         $data                        = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Create a replenishment.
+     * Creates a replenishment.
      *
      * @param CreateReplenishmentRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createReplenishment(CreateReplenishmentRequest $body): array
+    public function postReplenishments(CreateReplenishmentRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1688,6 +1616,43 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Retrieve a list of available delivery dates for a replenishment.
+     *
+     * @return array
+     */
+    public function getReplenishmentsDeliveryDates(): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/retailer/replenishments/delivery-dates";
+        $method          = "get";
+        $data["headers"] = [
+            'Accept' => 'application/vnd.retailer.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\DeliveryDatesResponse',
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1696,20 +1661,19 @@ class Request
      * Retrieve pickup time slots.
      *
      * @param PickupTimeSlotsRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createReplenishmentsPickupTimeSlots(PickupTimeSlotsRequest $body): array
+    public function postReplenishmentsPickupTimeSlots(PickupTimeSlotsRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments/pickup-time-slots";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -1734,6 +1698,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1742,20 +1707,19 @@ class Request
      * Retrieve product labels.
      *
      * @param ProductLabelsRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createReplenishmentsProductLabels(ProductLabelsRequest $body): array
+    public function postReplenishmentsProductLabels(ProductLabelsRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments/product-labels";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+pdf',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+pdf',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             400 =>
@@ -1780,6 +1744,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1788,17 +1753,16 @@ class Request
      * Gets a replenishment by replenishment id.
      *
      * @param string $replenishmentId The unique identifier of the replenishment.
-     *
      * @return array
      */
-    public function getReplenishment(string $replenishmentId): array
+    public function getReplenishmentsByReplenishmentId(string $replenishmentId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments/{replenishment-id}";
         $method          = "get";
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -1873,32 +1837,33 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Update a replenishment.
+     * Updates a replenishment.
      *
      * @param string                     $replenishmentId The unique identifier of the replenishment.
      * @param UpdateReplenishmentRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateReplenishment(
-        string $replenishmentId,
-        UpdateReplenishmentRequest $body
-    ): array {
+    public function putReplenishmentsByReplenishmentId(
+        string                      $replenishmentId,
+        ?UpdateReplenishmentRequest $body = null
+    ): array
+    {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments/{replenishment-id}";
         $method          = "put";
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -1923,6 +1888,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1932,10 +1898,12 @@ class Request
      *
      * @param string $replenishmentId The unique identifier of the replenishment.
      * @param string $labelType       The type of label which you want to print.
-     *
      * @return array
      */
-    public function getReplenishmentLoadCarrierLabels(string $replenishmentId, string $labelType): array
+    public function getReplenishmentsByReplenishmentIdLoadCarrierLabels(
+        string  $replenishmentId,
+        ?string $labelType = null
+    ): array
     {
         $data                        = [];
         $url                         = "https://api.bol.com/retailer/replenishments/{replenishment-id}/load-carrier-labels";
@@ -1944,7 +1912,7 @@ class Request
         $data["query"]               = [];
         $data["query"]["label-type"] = $labelType;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v5+pdf',
+            'Accept' => 'application/vnd.retailer.v7+pdf',
         ];
         $response                    = [
             400 =>
@@ -1969,6 +1937,7 @@ class Request
                 ],
         ];
         $data                        = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -1977,17 +1946,16 @@ class Request
      * Retrieve the pick list.
      *
      * @param string $replenishmentId The unique identifier of the replenishment.
-     *
      * @return array
      */
-    public function getReplenishmentsPickList(string $replenishmentId): array
+    public function getReplenishmentsByReplenishmentIdPickList(string $replenishmentId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/replenishments/{replenishment-id}/pick-list";
         $method          = "get";
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+pdf',
+            'Accept' => 'application/vnd.retailer.v7+pdf',
         ];
         $response        = [
             400 =>
@@ -2012,21 +1980,20 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
-     * Get a paginated list of multi-item returns, which are sorted by date in descending order.
+     * Get a paginated list of multi-item returns. Handled returns are sorted by date in descending order, while
+     * unhandled returns are sorted by date in ascending order.
      *
-     * @param int|null    $page             The page to get with a page size of 50.
-     * @param bool        $handled          The status of the returns you wish to see, shows either handled or
-     *                                      unhandled
-     *                                      returns.
-     * @param string|null $fulfilmentMethod The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled by
-     *                                      bol.com
-     *                                      (FBB).
-     *
+     * @param int    $page             The page to get with a page size of 50.
+     * @param bool   $handled          The status of the returns you wish to see, shows either handled or unhandled
+     *                                 returns.
+     * @param string $fulfilmentMethod The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled by bol.com
+     *                                 (FBB).
      * @return array
      */
     public function getReturns(?int $page = null, ?bool $handled = null, ?string $fulfilmentMethod = null): array
@@ -2039,7 +2006,7 @@ class Request
         $data["query"]["handled"]           = $handled;
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                           = [
             200 =>
@@ -2079,6 +2046,7 @@ class Request
                 ],
         ];
         $data                               = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2088,19 +2056,18 @@ class Request
      * resulting return id is provided in the process status.
      *
      * @param CreateReturnRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createReturn(CreateReturnRequest $body): array
+    public function postReturns(?CreateReturnRequest $body = null): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/returns";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2125,6 +2092,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2133,17 +2101,16 @@ class Request
      * Retrieve a return based on the return id.
      *
      * @param string $returnId Unique identifier for a return.
-     *
      * @return array
      */
-    public function getReturn(string $returnId): array
+    public function getReturnsByReturnId(string $returnId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/returns/{return-id}";
         $method          = "get";
         $url             = str_replace("{return-id}", $returnId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2183,24 +2150,22 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
 
     /**
      * Allows the user to handle a return. This can be to either handle an open return, or change the handlingResult of
-     * an already handled return. The latter is only possible in limited scenarios, please check the returns
-     * documentation for a complete list.
+     * an already handled return. Please refer to the Returns documentation for further details.
      *
-     * @param int           $rmaId The RMA (Return Merchandise Authorization) id that identifies this particular
-     *                             return.
+     * @param int           $rmaId The RMA (Return Merchandise Authorization) identifier of the return.
      * @param ReturnRequest $body  The handling result requested by the retailer.
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateReturn(int $rmaId, ReturnRequest $body): array
+    public function putReturnsByRmaId(int $rmaId, ?ReturnRequest $body = null): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/returns/{rma-id}";
@@ -2208,8 +2173,8 @@ class Request
         $url             = str_replace("{rma-id}", $rmaId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2234,6 +2199,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2242,13 +2208,11 @@ class Request
      * A paginated list to retrieve all your shipments up to 3 months old. The shipments will be sorted by date in
      * descending order.
      *
-     * @param int|null    $page             The page to get with a page size of 50.
-     * @param string|null $fulfilmentMethod The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled by
-     *                                      bol.com
-     *                                      (FBB).
-     * @param string|null $orderId          The id of the order. Only valid without fulfilment-method. The default
-     *                                      fulfilment-method is ignored.
-     *
+     * @param int    $page             The page to get with a page size of 50.
+     * @param string $fulfilmentMethod The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled by bol.com
+     *                                 (FBB).
+     * @param string $orderId          The id of the order. Only valid without fulfilment-method. The default
+     *                                 fulfilment-method is ignored.
      * @return array
      */
     public function getShipments(?int $page = null, ?string $fulfilmentMethod = null, ?string $orderId = null): array
@@ -2261,7 +2225,7 @@ class Request
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["query"]["order-id"]          = $orderId;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response                           = [
             200 =>
@@ -2301,6 +2265,7 @@ class Request
                 ],
         ];
         $data                               = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2309,17 +2274,16 @@ class Request
      * Retrieve a single shipment by its corresponding id.
      *
      * @param string $shipmentId The id of the shipment.
-     *
      * @return array
      */
-    public function getShipment(string $shipmentId): array
+    public function getShipmentsByShipmentId(string $shipmentId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/shipments/{shipment-id}";
         $method          = "get";
         $url             = str_replace("{shipment-id}", $shipmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2363,8 +2327,13 @@ class Request
                         ],
                     'transport'       =>
                         [
-                            '$type' => 'OBJ',
-                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ShipmentTransport',
+                            '$type'           => 'OBJ',
+                            '$ref'            => 'HarmSmits\\BolComClient\\Models\\ShipmentTransport',
+                            'transportEvents' =>
+                                [
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\TransportEvent',
+                                ],
                         ],
                 ],
             404 =>
@@ -2379,6 +2348,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2387,20 +2357,19 @@ class Request
      * Create a shipping label with a shipping label offer id retrieved from get delivery options.
      *
      * @param ShippingLabelRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createShippingLabel(ShippingLabelRequest $body): array
+    public function postShippingLabels(?ShippingLabelRequest $body = null): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/shipping-labels";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2425,6 +2394,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2434,20 +2404,19 @@ class Request
      * shipped.
      *
      * @param DeliveryOptionsRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function getShippingLabelsDeliveryOptions(DeliveryOptionsRequest $body): array
+    public function postShippingLabelsDeliveryOptions(?DeliveryOptionsRequest $body = null): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/shipping-labels/delivery-options";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2497,6 +2466,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2507,17 +2477,16 @@ class Request
      * without the label data.
      *
      * @param string $shippingLabelId The shipping label id.
-     *
      * @return array
      */
-    public function getShippingLabel(string $shippingLabelId): array
+    public function getShippingLabelsByShippingLabelId(string $shippingLabelId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/shipping-labels/{shipping-label-id}";
         $method          = "get";
         $url             = str_replace("{shipping-label-id}", $shippingLabelId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v5+pdf',
+            'Accept' => 'application/vnd.retailer.v7+pdf',
         ];
         $response        = [
             400 =>
@@ -2542,6 +2511,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2557,7 +2527,7 @@ class Request
         $url             = "https://api.bol.com/retailer/subscriptions";
         $method          = "get";
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v6+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2582,6 +2552,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2591,20 +2562,19 @@ class Request
      * support https scheme.
      *
      * @param CreateSubscriptionRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function createSubscription(CreateSubscriptionRequest $body): array
+    public function postSubscriptions(?CreateSubscriptionRequest $body = null): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/subscriptions";
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v6+json',
-            'Content-Type' => 'application/vnd.retailer.v6+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2629,6 +2599,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2645,7 +2616,7 @@ class Request
         $url             = "https://api.bol.com/retailer/subscriptions/signature-keys";
         $method          = "get";
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v6+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2660,6 +2631,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2667,16 +2639,18 @@ class Request
     /**
      * Send a test push notification to all subscriptions for the provided event.
      *
+     * @param string $subscriptionId A unique identifier for the subscription.
      * @return array
      */
-    public function createSubscriptionTest(): array
+    public function postSubscriptionsTestBySubscriptionId(string $subscriptionId): array
     {
         $data            = [];
-        $url             = "https://api.bol.com/retailer/subscriptions/test";
+        $url             = "https://api.bol.com/retailer/subscriptions/test/{subscription-id}";
         $method          = "post";
+        $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v6+json',
-            'Content-Type' => 'application/vnd.retailer.v6+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2701,6 +2675,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2709,17 +2684,16 @@ class Request
      * Retrieve a configured and active push notification subscription with the provided id.
      *
      * @param string $subscriptionId A unique identifier for the subscription.
-     *
      * @return array
      */
-    public function getSubscription(string $subscriptionId): array
+    public function getSubscriptionsBySubscriptionId(string $subscriptionId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/subscriptions/{subscription-id}";
         $method          = "get";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v6+json',
+            'Accept' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             200 =>
@@ -2749,6 +2723,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2759,23 +2734,23 @@ class Request
      *
      * @param string                    $subscriptionId A unique identifier for the subscription.
      * @param UpdateSubscriptionRequest $body
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateSubscription(
-        string $subscriptionId,
-        UpdateSubscriptionRequest $body
-    ): array {
+    public function putSubscriptionsBySubscriptionId(
+        string                     $subscriptionId,
+        ?UpdateSubscriptionRequest $body = null
+    ): array
+    {
         $data            = [];
         $url             = "https://api.bol.com/retailer/subscriptions/{subscription-id}";
         $method          = "put";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v6+json',
-            'Content-Type' => 'application/vnd.retailer.v6+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2800,6 +2775,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2808,18 +2784,17 @@ class Request
      * Delete a push notification subscription with the provided id.
      *
      * @param string $subscriptionId A unique identifier for the subscription.
-     *
      * @return array
      */
-    public function deleteSubscription(string $subscriptionId): array
+    public function deleteSubscriptionsBySubscriptionId(string $subscriptionId): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/subscriptions/{subscription-id}";
         $method          = "delete";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v6+json',
-            'Content-Type' => 'application/vnd.retailer.v6+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2844,6 +2819,7 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2854,12 +2830,11 @@ class Request
      *
      * @param string                 $transportId The transport id.
      * @param ChangeTransportRequest $body        The change transport requested by the user.
-     *
      * @return array
      *
      * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
      */
-    public function updateTransport(string $transportId, ChangeTransportRequest $body): array
+    public function putTransportsByTransportId(string $transportId, ChangeTransportRequest $body): array
     {
         $data            = [];
         $url             = "https://api.bol.com/retailer/transports/{transport-id}";
@@ -2867,8 +2842,8 @@ class Request
         $url             = str_replace("{transport-id}", $transportId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v5+json',
-            'Content-Type' => 'application/vnd.retailer.v5+json',
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
         ];
         $response        = [
             202 =>
@@ -2893,6 +2868,1536 @@ class Request
                 ],
         ];
         $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+    /**
+     * Retrieve a list of process statuses, which shows information regarding previously executed PUT/POST/DELETE
+     * requests in descending order. You need to supply an entity id and event type. Please note: process status
+     * instances are only retained for a limited period of time after completion. Outside of this period, deleted
+     * process statuses will no longer be returned. Please handle this accordingly, by stopping any active polling for
+     * these statuses.
+     *
+     * @param string $entityId  The entity id is not unique, so you will need to provide an event type. For example, an
+     *                          entity id can be an order item id, transport id, return number, replenishment id,
+     *                          campaign id, and keyword id.
+     * @param string $eventType The event type can only be used in combination with the entity id.
+     * @param int    $page      The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getSharedProcessStatus(string $entityId, string $eventType, ?int $page = null): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/shared/process-status";
+        $method                      = "get";
+        $data["query"]               = [];
+        $data["query"]["entity-id"]  = $entityId;
+        $data["query"]["event-type"] = $eventType;
+        $data["query"]["page"]       = $page;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.retailer.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'           => 'OBJ',
+                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\ProcessStatusResponse',
+                    'processStatuses' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                            'links' =>
+                                [
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                                ],
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+    /**
+     * Retrieve a list of process statuses, which shows information regarding previously executed PUT/POST/DELETE
+     * requests. No more than 1000 process status id's can be sent in a single request. Please note: process status
+     * instances are only retained for a limited period of time after completion. Outside of this period, deleted
+     * process statuses will no longer be returned. Please handle this accordingly, by stopping any active polling for
+     * these statuses.
+     *
+     * @param BulkProcessStatusRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postSharedProcessStatus(BulkProcessStatusRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/shared/process-status";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.retailer.v7+json',
+            'Content-Type' => 'application/vnd.retailer.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type'           => 'OBJ',
+                    '$ref'            => 'HarmSmits\\BolComClient\\Models\\ProcessStatusResponse',
+                    'processStatuses' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                            'links' =>
+                                [
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                                ],
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Retrieve a specific process-status, which shows information regarding a previously executed PUT/POST/DELETE
+     * request. All PUT/POST/DELETE requests on the other endpoints will supply a process-status-id in the related
+     * response. You can use this id to retrieve a status by using the endpoint below. Please note: process status
+     * instances are only retained for a limited period of time after completion. Outside of this period, a 404 will be
+     * returned for missing process statuses. Please handle this accordingly, by stopping any active polling for these
+     * statuses.
+     *
+     * @param string $processStatusId The id of the process status being requested. This id is supplied in every
+     *                                response to a PUT/POST/DELETE request on the other endpoints.
+     * @return array
+     */
+    public function getSharedProcessStatusByProcessStatusId(string $processStatusId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/shared/process-status/{process-status-id}";
+        $method          = "get";
+        $url             = str_replace("{process-status-id}", $processStatusId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.retailer.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+    /**
+     * Gets a list of all products that the advertiser is selling on the bol.com platform and that are available for
+     * advertising.
+     *
+     * @param int $page The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserAssortments(?int $page = null): array
+    {
+        $data                  = [];
+        $url                   = "https://api.bol.com/advertiser/assortments";
+        $method                = "get";
+        $data["query"]         = [];
+        $data["query"]["page"] = $page;
+        $data["headers"]       = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response              = [
+            200 =>
+                [
+                    '$type'    => 'OBJ',
+                    '$ref'     => 'HarmSmits\\BolComClient\\Models\\Assortments',
+                    'products' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Assortment',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                  = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the performance results of an ad group for the period requested. The results are aggregated per day.
+     *
+     * @param string $adGroupId The identifier of the ad group.
+     * @param string $startDate The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate   The end date for the reporting period. This will be one day after the last full day
+     *                          that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsAdGroupPerformanceByAdGroupId(string $adGroupId, string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/ad-group-performance/{ad-group-id}";
+        $method                      = "get";
+        $url                         = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'              => 'OBJ',
+                    '$ref'               => 'HarmSmits\\BolComClient\\Models\\AdGroupPerformanceResponse',
+                    'adGroupPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\AdGroupPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all ad groups that are present within a campaign.
+     *
+     * @param string $campaignId Unique identifier for the campaign.
+     * @param int    $page       The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsAdGroups(string $campaignId, ?int $page = null): array
+    {
+        $data                         = [];
+        $url                          = "https://api.bol.com/advertiser/sponsored-products/ad-groups";
+        $method                       = "get";
+        $data["query"]                = [];
+        $data["query"]["campaign-id"] = $campaignId;
+        $data["query"]["page"]        = $page;
+        $data["headers"]              = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                     = [
+            200 =>
+                [
+                    '$type'    => 'OBJ',
+                    '$ref'     => 'HarmSmits\\BolComClient\\Models\\AdGroupsResponse',
+                    'adGroups' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\AdGroup',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                         = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Creates an ad group.
+     *
+     * @param CreateAdGroupRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postAdvertiserSponsoredProductsAdGroups(CreateAdGroupRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/ad-groups";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the details of an ad group.
+     *
+     * @param string $adGroupId The identifier of the ad group.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsAdGroupsByAdGroupId(string $adGroupId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/ad-groups/{ad-group-id}";
+        $method          = "get";
+        $url             = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type'    => 'OBJ',
+                    '$ref'     => 'HarmSmits\\BolComClient\\Models\\AdGroupsResponse',
+                    'adGroups' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\AdGroup',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Updates an ad group.
+     *
+     * @param string               $adGroupId The identifier of the ad group.
+     * @param UpdateAdGroupRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function putAdvertiserSponsoredProductsAdGroupsByAdGroupId(string $adGroupId, UpdateAdGroupRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/ad-groups/{ad-group-id}";
+        $method          = "put";
+        $url             = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the advertiser performance results for the period requested. The results are aggregated per day.
+     *
+     * @param string $startDate The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate   The end date for the reporting period. This will be one day after the last full day
+     *                          that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsAdvertiserPerformance(string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/advertiser-performance";
+        $method                      = "get";
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'                 => 'OBJ',
+                    '$ref'                  => 'HarmSmits\\BolComClient\\Models\\AdvertiserPerformanceResponse',
+                    'advertiserPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\AdvertiserPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the performance results of a campaign for the period requested. The results are aggregated per day.
+     *
+     * @param string $campaignId Unique identifier for the campaign.
+     * @param string $startDate  The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate    The end date for the reporting period. This will be one day after the last full day
+     *                           that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsCampaignPerformanceByCampaignId(string $campaignId, string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/campaign-performance/{campaign-id}";
+        $method                      = "get";
+        $url                         = str_replace("{campaign-id}", $campaignId, $url);
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'               => 'OBJ',
+                    '$ref'                => 'HarmSmits\\BolComClient\\Models\\CampaignPerformanceResponse',
+                    'campaignPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\CampaignPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all campaigns for an advertiser.
+     *
+     * @param int $page The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsCampaigns(?int $page = null): array
+    {
+        $data                  = [];
+        $url                   = "https://api.bol.com/advertiser/sponsored-products/campaigns";
+        $method                = "get";
+        $data["query"]         = [];
+        $data["query"]["page"] = $page;
+        $data["headers"]       = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response              = [
+            200 =>
+                [
+                    '$type'     => 'OBJ',
+                    '$ref'      => 'HarmSmits\\BolComClient\\Models\\CampaignsResponse',
+                    'campaigns' =>
+                        [
+                            '$type'     => 'OBJ_ARRAY',
+                            '$ref'      => 'HarmSmits\\BolComClient\\Models\\SingleCampaignResponse',
+                            'countries' =>
+                                [
+                                    '$type' => 'OBJ_ARRAY',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\CampaignCountry',
+                                ],
+                            'bidding'   =>
+                                [
+                                    '$type' => 'OBJ',
+                                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\BiddingModel',
+                                ],
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                  = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Creates a campaign.
+     *
+     * @param CreateCampaignRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postAdvertiserSponsoredProductsCampaigns(CreateCampaignRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/campaigns";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the details of a campaign.
+     *
+     * @param string $campaignId Unique identifier for the campaign.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsCampaignsByCampaignId(string $campaignId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/campaigns/{campaign-id}";
+        $method          = "get";
+        $url             = str_replace("{campaign-id}", $campaignId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type'     => 'OBJ',
+                    '$ref'      => 'HarmSmits\\BolComClient\\Models\\SingleCampaignResponse',
+                    'countries' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\CampaignCountry',
+                        ],
+                    'bidding'   =>
+                        [
+                            '$type' => 'OBJ',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\BiddingModel',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Updates a campaign.
+     *
+     * @param string                $campaignId Unique identifier for the campaign.
+     * @param UpdateCampaignRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function putAdvertiserSponsoredProductsCampaignsByCampaignId(string $campaignId, UpdateCampaignRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/campaigns/{campaign-id}";
+        $method          = "put";
+        $url             = str_replace("{campaign-id}", $campaignId, $url);
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the performance results of all keywords within an ad group for the period requested. The results are
+     * returned per keyword and are aggregated to the period requested.
+     *
+     * @param string $adGroupId The identifier of the ad group.
+     * @param string $startDate The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate   The end date for the reporting period. This will be one day after the last full day
+     *                          that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsKeywordPerformanceByAdGroupId(string $adGroupId, string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/keyword-performance/{ad-group-id}";
+        $method                      = "get";
+        $url                         = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'              => 'OBJ',
+                    '$ref'               => 'HarmSmits\\BolComClient\\Models\\KeywordPerformanceResponse',
+                    'keywordPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\KeywordPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all keywords that are present within an ad group.
+     *
+     * @param string $adGroupId The identifier of the parent ad group.
+     * @param int    $page      The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsKeywords(string $adGroupId, ?int $page = null): array
+    {
+        $data                         = [];
+        $url                          = "https://api.bol.com/advertiser/sponsored-products/keywords";
+        $method                       = "get";
+        $data["query"]                = [];
+        $data["query"]["ad-group-id"] = $adGroupId;
+        $data["query"]["page"]        = $page;
+        $data["headers"]              = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                     = [
+            200 =>
+                [
+                    '$type'    => 'OBJ',
+                    '$ref'     => 'HarmSmits\\BolComClient\\Models\\KeywordsResponse',
+                    'keywords' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Keyword',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                         = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Creates a keyword and adds it to an ad group.
+     *
+     * @param CreateKeywordRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postAdvertiserSponsoredProductsKeywords(?CreateKeywordRequest $body = null): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/keywords";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the details of a keyword.
+     *
+     * @param string $keywordId The identifier of the keyword.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsKeywordsByKeywordId(string $keywordId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/keywords/{keyword-id}";
+        $method          = "get";
+        $url             = str_replace("{keyword-id}", $keywordId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\Keyword',
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Updates a keyword.
+     *
+     * @param string               $keywordId The identifier of the keyword.
+     * @param UpdateKeywordRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function putAdvertiserSponsoredProductsKeywordsByKeywordId(string $keywordId, UpdateKeywordRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/keywords/{keyword-id}";
+        $method          = "put";
+        $url             = str_replace("{keyword-id}", $keywordId, $url);
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Deletes a single keyword.
+     *
+     * @param string $keywordId The identifier of the keyword.
+     * @return array
+     */
+    public function deleteAdvertiserSponsoredProductsKeywordsByKeywordId(string $keywordId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/keywords/{keyword-id}";
+        $method          = "delete";
+        $url             = str_replace("{keyword-id}", $keywordId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all negative keywords that are present within an ad group.
+     *
+     * @param string $adGroupId The identifier of the parent ad group.
+     * @param int    $page      The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsNegativeKeywords(string $adGroupId, ?int $page = null): array
+    {
+        $data                         = [];
+        $url                          = "https://api.bol.com/advertiser/sponsored-products/negative-keywords";
+        $method                       = "get";
+        $data["query"]                = [];
+        $data["query"]["ad-group-id"] = $adGroupId;
+        $data["query"]["page"]        = $page;
+        $data["headers"]              = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                     = [
+            200 =>
+                [
+                    '$type'            => 'OBJ',
+                    '$ref'             => 'HarmSmits\\BolComClient\\Models\\NegativeKeywordsResponse',
+                    'negativeKeywords' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\NegativeKeyword',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                         = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Creates a negative keyword and adds it to an ad group.
+     *
+     * @param CreateNegativeKeywordRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postAdvertiserSponsoredProductsNegativeKeywords(CreateNegativeKeywordRequest $body): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/negative-keywords";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the details of a negative keywords.
+     *
+     * @param string $keywordId The identifier of the negative keyword.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsNegativeKeywordsByKeywordId(string $keywordId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/negative-keywords/{keyword-id}";
+        $method          = "get";
+        $url             = str_replace("{keyword-id}", $keywordId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\NegativeKeyword',
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Deletes a negative keyword.
+     *
+     * @param string $keywordId The identifier of the negative keyword.
+     * @return array
+     */
+    public function deleteAdvertiserSponsoredProductsNegativeKeywordsByKeywordId(string $keywordId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/negative-keywords/{keyword-id}";
+        $method          = "delete";
+        $url             = str_replace("{keyword-id}", $keywordId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the performance results of all target products within an ad group for the period requested. The results are
+     * returned per target product and are aggregated to the period requested.
+     *
+     * @param string $adGroupId The identifier of the ad group.
+     * @param string $startDate The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate   The end date for the reporting period. This will be one day after the last full day
+     *                          that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsProductPerformanceByAdGroupId(string $adGroupId, string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/product-performance/{ad-group-id}";
+        $method                      = "get";
+        $url                         = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'              => 'OBJ',
+                    '$ref'               => 'HarmSmits\\BolComClient\\Models\\ProductPerformanceResponse',
+                    'productPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProductPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the performance results of all search terms within an ad group for the period requested. The results are
+     * returned per search term and are aggregated to the period requested.
+     *
+     * @param string $adGroupId The identifier of the ad group.
+     * @param string $startDate The start date for the reporting period. Period start date in ISO 8601 standard.
+     * @param string $endDate   The end date for the reporting period. This will be one day after the last full day
+     *                          that is included in the reporting. Period end date in ISO 8601 standard.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsSearchTermPerformanceByAdGroupId(string $adGroupId, string $startDate, string $endDate): array
+    {
+        $data                        = [];
+        $url                         = "https://api.bol.com/advertiser/sponsored-products/search-term-performance/{ad-group-id}";
+        $method                      = "get";
+        $url                         = str_replace("{ad-group-id}", $adGroupId, $url);
+        $data["query"]               = [];
+        $data["query"]["start-date"] = $startDate;
+        $data["query"]["end-date"]   = $endDate;
+        $data["headers"]             = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                    = [
+            200 =>
+                [
+                    '$type'                 => 'OBJ',
+                    '$ref'                  => 'HarmSmits\\BolComClient\\Models\\SearchTermPerformanceResponse',
+                    'searchTermPerformance' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\SearchTermPerformance',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+            404 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                        = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets a paginated list of all target products that are present within an ad group.
+     *
+     * @param string $adGroupId The identifier of the parent ad group.
+     * @param int    $page      The requested page number with a page size of 50 items.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsTargetProducts(string $adGroupId, ?int $page = null): array
+    {
+        $data                         = [];
+        $url                          = "https://api.bol.com/advertiser/sponsored-products/target-products";
+        $method                       = "get";
+        $data["query"]                = [];
+        $data["query"]["ad-group-id"] = $adGroupId;
+        $data["query"]["page"]        = $page;
+        $data["headers"]              = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response                     = [
+            200 =>
+                [
+                    '$type'          => 'OBJ',
+                    '$ref'           => 'HarmSmits\\BolComClient\\Models\\TargetProductsResponse',
+                    'targetProducts' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\TargetProduct',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data                         = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Creates a target product and adds it to an ad group.
+     *
+     * @param CreateTargetProductRequest $body
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function postAdvertiserSponsoredProductsTargetProducts(?CreateTargetProductRequest $body = null): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/target-products";
+        $method          = "post";
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept'       => 'application/vnd.advertiser.v7+json',
+            'Content-Type' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Gets the details of a target product.
+     *
+     * @param string $targetProductId The identifier of the target product.
+     * @return array
+     */
+    public function getAdvertiserSponsoredProductsTargetProductsByTargetProductId(string $targetProductId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/target-products/{target-product-id}";
+        $method          = "get";
+        $url             = str_replace("{target-product-id}", $targetProductId, $url);
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            200 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\TargetProduct',
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
+        return [$method, $url, $data, $response];
+    }
+
+
+    /**
+     * Updates a target product.
+     *
+     * @param UpdateTargetProductRequest $body
+     * @param string                     $targetProductId The identifier of the target product.
+     * @return array
+     *
+     * @throws \HarmSmits\BolComClient\Exception\InvalidPropertyException
+     */
+    public function putAdvertiserSponsoredProductsTargetProductsByTargetProductId(UpdateTargetProductRequest $body, string $targetProductId): array
+    {
+        $data            = [];
+        $url             = "https://api.bol.com/advertiser/sponsored-products/target-products/{target-product-id}";
+        $method          = "put";
+        $url             = str_replace("{target-product-id}", $targetProductId, $url);
+        $data["body"]    = json_encode($body->__toArray());
+        $data["headers"] = [
+            'Accept' => 'application/vnd.advertiser.v7+json',
+        ];
+        $response        = [
+            202 =>
+                [
+                    '$type' => 'OBJ',
+                    '$ref'  => 'HarmSmits\\BolComClient\\Models\\ProcessStatus',
+                    'links' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Link',
+                        ],
+                ],
+            400 =>
+                [
+                    '$type'      => 'OBJ',
+                    '$ref'       => 'HarmSmits\\BolComClient\\Models\\Problem',
+                    'violations' =>
+                        [
+                            '$type' => 'OBJ_ARRAY',
+                            '$ref'  => 'HarmSmits\\BolComClient\\Models\\Violation',
+                        ],
+                ],
+        ];
+        $data            = $this->recursiveArrayFilter($data);
+
         return [$method, $url, $data, $response];
     }
 
@@ -2912,7 +4417,7 @@ class Request
         }
 
         return array_filter($data, static function ($raw) {
-            return !is_null($raw);
+            return ! is_null($raw);
         });
     }
 }

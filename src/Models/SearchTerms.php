@@ -8,6 +8,5 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class SearchTerms extends AModel
 {
-    // TODO verify this questionable api naming in swagger.
-    protected ?SearchTerm $searchTerms = null;
+	protected ?SearchTerm $searchTerms = null;
 }

@@ -10,10 +10,10 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class ShipmentFulfilment extends AModel
 {
-    const METHOD_FBR = 'FBR';
-    const METHOD_FBB = 'FBB';
-    const DISTRIBUTION_PARTY_RETAILER = 'RETAILER';
-    const DISTRIBUTION_PARTY_BOL = 'BOL';
+    public const METHOD_FBR = 'FBR';
+    public const METHOD_FBB = 'FBB';
+    public const DISTRIBUTION_PARTY_RETAILER = 'RETAILER';
+    public const DISTRIBUTION_PARTY_BOL = 'BOL';
 
     /**
      * Specifies whether this shipment has been fulfilled by the retailer (FBR) or fulfilled by bol.com (FBB).

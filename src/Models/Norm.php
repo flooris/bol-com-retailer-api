@@ -9,6 +9,8 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class Norm extends AModel
 {
+    public const CONDITION__ = '>=';
+
     /**
      * Condition norm for this indicator.
      * @var string

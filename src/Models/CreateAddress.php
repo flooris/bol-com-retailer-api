@@ -2,6 +2,8 @@
 
 namespace HarmSmits\BolComClient\Models;
 
+use \DateTime;
+
 /**
  * @method null|string getStreetName()
  * @method self setStreetName(string $streetName)
@@ -18,47 +20,47 @@ namespace HarmSmits\BolComClient\Models;
  * @method null|string getAttentionOf()
  * @method self setAttentionOf(string $attentionOf)
  */
-final class CreateAddress extends AModel
+final class CreateAddress extends \HarmSmits\BolComClient\Models\AModel
 {
-    /**
-     * The street name of the pickup address.
-     * @var string
-     */
-    protected string $streetName;
+	/**
+	 * The street name of the pickup address.
+	 * @var string
+	 */
+	protected string $streetName;
 
-    /**
-     * The house number of the pickup address.
-     * @var string
-     */
-    protected string $houseNumber;
+	/**
+	 * The house number of the pickup address.
+	 * @var string
+	 */
+	protected string $houseNumber;
 
-    /**
-     * The zip code in '1234AB' format for NL and '0000' for BE addresses.
-     * @var string
-     */
-    protected string $zipCode;
+	/**
+	 * The zip code in '1234AB' format for NL and '0000' for BE addresses.
+	 * @var string
+	 */
+	protected string $zipCode;
 
-    /**
-     * The extension of the house number.
-     * @var string
-     */
-    protected ?string $houseNumberExtension = null;
+	/**
+	 * The extension of the house number.
+	 * @var string
+	 */
+	protected ?string $houseNumberExtension = null;
 
-    /**
-     * The city of the pickup address.
-     * @var string
-     */
-    protected string $city;
+	/**
+	 * The city of the pickup address.
+	 * @var string
+	 */
+	protected string $city;
 
-    /**
-     * The ISO 3166-2 country code.
-     * @var string
-     */
-    protected ?string $countryCode = null;
+	/**
+	 * The ISO 3166-2 country code.
+	 * @var string
+	 */
+	protected ?string $countryCode = null;
 
-    /**
-     * Name of the person responsible for this replenishment.
-     * @var string
-     */
-    protected string $attentionOf;
+	/**
+	 * Name of the person responsible for this replenishment.
+	 * @var string
+	 */
+	protected string $attentionOf;
 }

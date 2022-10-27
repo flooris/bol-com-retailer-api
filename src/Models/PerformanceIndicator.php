@@ -10,16 +10,16 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class PerformanceIndicator extends AModel
 {
-    const NAME_CANCELLATIONS = 'CANCELLATIONS';
-    const NAME_FULFILMENT = 'FULFILMENT';
-    const NAME_PHONE_AVAILABILITY = 'PHONE_AVAILABILITY';
-    const NAME_RESPONSE_TIME = 'RESPONSE_TIME';
-    const NAME_CASE_ITEM_RATIO = 'CASE_ITEM_RATIO';
-    const NAME_TRACK_AND_TRACE = 'TRACK_AND_TRACE';
-    const NAME_RETURNS = 'RETURNS';
-    const NAME_REVIEWS = 'REVIEWS';
-    const TYPE_PERCENTAGE = 'PERCENTAGE';
-    const TYPE_AVERAGE = 'AVERAGE';
+    public const NAME_CANCELLATIONS = 'CANCELLATIONS';
+    public const NAME_FULFILMENT = 'FULFILMENT';
+    public const NAME_PHONE_AVAILABILITY = 'PHONE_AVAILABILITY';
+    public const NAME_RESPONSE_TIME = 'RESPONSE_TIME';
+    public const NAME_CASE_ITEM_RATIO = 'CASE_ITEM_RATIO';
+    public const NAME_TRACK_AND_TRACE = 'TRACK_AND_TRACE';
+    public const NAME_RETURNS = 'RETURNS';
+    public const NAME_REVIEWS = 'REVIEWS';
+    public const TYPE_PERCENTAGE = 'PERCENTAGE';
+    public const TYPE_AVERAGE = 'AVERAGE';
 
     /**
      * Indicator name.

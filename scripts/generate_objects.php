@@ -370,5 +370,5 @@ PHP;
 
 require(dirname(__DIR__) . "/vendor/autoload.php");
 
-$class = new GenerateObjects(dirname(__DIR__) . "/resources/v5.json");
+$class = new GenerateObjects(dirname(__DIR__) . "/resources/v7-shared.json");
 $class->generate();

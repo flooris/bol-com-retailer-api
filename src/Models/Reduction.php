@@ -36,6 +36,5 @@ final class Reduction extends AModel
 	 * The end date from which the commission reduction is not valid anymore, in ISO 8601 format.
 	 * @var string
 	 */
-	// TODO fix date type
-	protected string $endDate;
+	protected ?string $endDate = null;
 }

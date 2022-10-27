@@ -3,7 +3,7 @@
 namespace HarmSmits\BolComClient\Models;
 
 /**
- * @method string getValue()
+ * @method null|string getValue()
  * @method self setValue(string $value)
  * @method null|string getUnitId()
  * @method self setUnitId(string $unitId)

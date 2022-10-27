@@ -10,11 +10,11 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class BulkCommissionQuery extends AModel
 {
-    const CONDITION_NEW = 'NEW';
-    const CONDITION_AS_NEW = 'AS_NEW';
-    const CONDITION_GOOD = 'GOOD';
-    const CONDITION_REASONABLE = 'REASONABLE';
-    const CONDITION_MODERATE = 'MODERATE';
+    public const CONDITION_NEW = 'NEW';
+    public const CONDITION_AS_NEW = 'AS_NEW';
+    public const CONDITION_GOOD = 'GOOD';
+    public const CONDITION_REASONABLE = 'REASONABLE';
+    public const CONDITION_MODERATE = 'MODERATE';
 
     /**
      * The EAN number associated with this product.

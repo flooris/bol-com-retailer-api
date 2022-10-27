@@ -29,6 +29,7 @@ final class Attribute extends AModel
     public function setValues(array $values): self
     {
         $this->_checkIfPureArray($values, AttributeValue::class);
+        $this->_checkArrayBounds($values, 1, 300);
         $this->values = $values;
         return $this;
     }

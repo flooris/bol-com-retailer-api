@@ -12,11 +12,17 @@ namespace HarmSmits\BolComClient\Models;
  * @method self setExactDeliveryDate(string $exactDeliveryDate)
  * @method null|string getExpiryDate()
  * @method self setExpiryDate(string $expiryDate)
+ * @method null|string getTimeFrameType()
  */
 final class OrderFulfilment extends AModel
 {
-    const DISTRIBUTION_PARTY_RETAILER = 'RETAILER';
-    const DISTRIBUTION_PARTY_BOL = 'BOL';
+    public const DISTRIBUTION_PARTY_RETAILER = 'RETAILER';
+    public const DISTRIBUTION_PARTY_BOL = 'BOL';
+    public const TIME_FRAME_TYPE_REGULAR = 'REGULAR';
+    public const TIME_FRAME_TYPE_EVENING = 'EVENING';
+    public const TIME_FRAME_TYPE_APPOINTMENT = 'APPOINTMENT';
+    public const TIME_FRAME_TYPE_SAMEDAY = 'SAMEDAY';
+    public const TIME_FRAME_TYPE_SUNDAY = 'SUNDAY';
 
     /**
      * Specifies whether this shipment has been fulfilled by the retailer (FBR) or fulfilled by bol.com (FBB).
@@ -67,6 +73,19 @@ final class OrderFulfilment extends AModel
             "BOL",
         ]);
         $this->distributionParty = $distributionParty;
+        return $this;
+    }
+
+    public function setTimeFrameType(string $timeFrameType): self
+    {
+        $this->_checkEnumBounds($timeFrameType, [
+            "REGULAR",
+            "EVENING",
+            "APPOINTMENT",
+            "SAMEDAY",
+            "SUNDAY",
+        ]);
+        $this->timeFrameType = $timeFrameType;
         return $this;
     }
 }

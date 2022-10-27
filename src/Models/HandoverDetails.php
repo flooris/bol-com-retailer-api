@@ -12,8 +12,8 @@ use DateTime;
  */
 final class HandoverDetails extends AModel
 {
-    const COLLECTION_METHOD_DROP_OFF = 'DROP_OFF';
-    const COLLECTION_METHOD_PICK_UP = 'PICK_UP';
+    public const COLLECTION_METHOD_DROP_OFF = 'DROP_OFF';
+    public const COLLECTION_METHOD_PICK_UP = 'PICK_UP';
 
     /**
      * Indicates if you can use this label without receiving a strike if you handover before the

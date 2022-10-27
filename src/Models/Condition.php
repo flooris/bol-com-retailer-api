@@ -10,13 +10,13 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class Condition extends AModel
 {
-    const NAME_NEW = 'NEW';
-    const NAME_AS_NEW = 'AS_NEW';
-    const NAME_GOOD = 'GOOD';
-    const NAME_REASONABLE = 'REASONABLE';
-    const NAME_MODERATE = 'MODERATE';
-    const CATEGORY_NEW = 'NEW';
-    const CATEGORY_SECONDHAND = 'SECONDHAND';
+    public const NAME_NEW = 'NEW';
+    public const NAME_AS_NEW = 'AS_NEW';
+    public const NAME_GOOD = 'GOOD';
+    public const NAME_REASONABLE = 'REASONABLE';
+    public const NAME_MODERATE = 'MODERATE';
+    public const CATEGORY_NEW = 'NEW';
+    public const CATEGORY_SECONDHAND = 'SECONDHAND';
 
     /**
      * The condition of the offered product.

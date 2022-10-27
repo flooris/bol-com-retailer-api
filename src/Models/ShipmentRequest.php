@@ -34,6 +34,7 @@ final class ShipmentRequest extends AModel
 
 	protected ?TransportInstruction $transport = null;
 
+
 	public function setOrderItems(array $orderItems): self
 	{
 		$this->_checkIfPureArray($orderItems, OrderItem::class);

@@ -2,23 +2,21 @@
 
 namespace HarmSmits\BolComClient\Models;
 
-/**
- * @method Commission[] getCommissions()
- */
-final class BulkCommissionResponse extends AModel
-{
-    /** @var Commission[] */
-    protected array $commissions = [];
+use \DateTime;
 
-    /**
-     * @param Commission[] $commissions
-     *
-     * @return $this
-     */
-    public function setCommissions(array $commissions): self
-    {
-        $this->_checkIfPureArray($commissions, Commission::class);
-        $this->commissions = $commissions;
-        return $this;
-    }
+/**
+ * @method null|array getCommissions()
+ */
+final class BulkCommissionResponse extends \HarmSmits\BolComClient\Models\AModel
+{
+	/** @var Commission[] */
+	protected array $commissions = [];
+
+
+	public function setCommissions(array $commissions): self
+	{
+		$this->_checkIfPureArray($commissions, \HarmSmits\BolComClient\Models\Commission::class);
+		$this->commissions = $commissions;
+		return $this;
+	}
 }

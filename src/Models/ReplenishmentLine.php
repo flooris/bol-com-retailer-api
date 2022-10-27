@@ -19,9 +19,9 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class ReplenishmentLine extends AModel
 {
-    const LINE_STATE_ANNOUNCED = 'ANNOUNCED';
-    const LINE_STATE_UNANNOUNCED = 'UNANNOUNCED';
-    const LINE_STATE_UNKNOWN = 'UNKNOWN';
+    public const LINE_STATE_ANNOUNCED = 'ANNOUNCED';
+    public const LINE_STATE_UNANNOUNCED = 'UNANNOUNCED';
+    public const LINE_STATE_UNKNOWN = 'UNKNOWN';
 
     /**
      * The EAN number associated with this product.

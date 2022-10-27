@@ -34,13 +34,13 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class ShipmentDetails extends AModel
 {
-    const SALUTATION_MALE = 'MALE';
-    const SALUTATION_FEMALE = 'FEMALE';
-    const SALUTATION_UNKNOWN = 'UNKNOWN';
-    const LANGUAGE_NL = 'nl';
-    const LANGUAGE_NL_BE = 'nl-BE';
-    const LANGUAGE_FR = 'fr';
-    const LANGUAGE_FR_BE = 'fr-BE';
+    public const SALUTATION_MALE = 'MALE';
+    public const SALUTATION_FEMALE = 'FEMALE';
+    public const SALUTATION_UNKNOWN = 'UNKNOWN';
+    public const LANGUAGE_NL = 'nl';
+    public const LANGUAGE_NL_BE = 'nl-BE';
+    public const LANGUAGE_FR = 'fr';
+    public const LANGUAGE_FR_BE = 'fr-BE';
 
     /**
      * The name of Pick Up Point location this order needs to be shipped to.
@@ -145,9 +145,16 @@ final class ShipmentDetails extends AModel
         return $this;
     }
 
-    public function setLanguage(string $language): self
-    {
-        $this->language = $language;
-        return $this;
-    }
+
+	public function setLanguage(string $language): self
+	{
+		$this->_checkEnumBounds($language, [
+			"nl",
+			"nl-BE",
+			"fr",
+			"fr-BE"
+		]);
+		$this->language = $language;
+		return $this;
+	}
 }

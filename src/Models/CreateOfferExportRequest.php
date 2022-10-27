@@ -7,7 +7,7 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class CreateOfferExportRequest extends AModel
 {
-    const FORMAT_CSV = 'CSV';
+    public const FORMAT_CSV = 'CSV';
 
     /**
      * The file format in which to return the export.

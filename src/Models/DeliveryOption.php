@@ -5,11 +5,15 @@ namespace HarmSmits\BolComClient\Models;
 /**
  * @method null|string getShippingLabelOfferId()
  * @method self setShippingLabelOfferId(string $shippingLabelOfferId)
+ * @method null|bool getRecommended()
+ * @method self setRecommended(bool $recommended)
  * @method null|string getValidUntilDate()
  * @method self setValidUntilDate(string $validUntilDate)
  * @method null|string getTransporterCode()
  * @method self setTransporterCode(string $transporterCode)
  * @method null|string getLabelType()
+ * @method null|string getLabelDisplayName()
+ * @method self setLabelDisplayName(string $labelDisplayName)
  * @method null|LabelPrice getLabelPrice()
  * @method self setLabelPrice(LabelPrice $labelPrice)
  * @method null|PackageRestrictions getPackageRestrictions()
@@ -19,15 +23,21 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class DeliveryOption extends AModel
 {
-    const LABEL_TYPE_PARCEL = 'PARCEL';
-    const LABEL_TYPE_MAILBOX = 'MAILBOX';
-    const LABEL_TYPE_MAILBOX_LIGHT = 'MAILBOX_LIGHT';
+    public const LABEL_TYPE_PARCEL = 'PARCEL';
+    public const LABEL_TYPE_MAILBOX = 'MAILBOX';
+    public const LABEL_TYPE_MAILBOX_LIGHT = 'MAILBOX_LIGHT';
 
     /**
      * Unique identifier for the shipping label offer.
      * @var string
      */
-    protected ?string $shippingLabelOfferId = null;
+    protected string $shippingLabelOfferId;
+
+    /**
+     * Indicates whether this delivery option is recommended to be the best option to ship your order item(s) with.
+     * @var bool
+     */
+    protected bool $recommended;
 
     /**
      * The date until the delivery option (incl total price) is valid.
@@ -47,6 +57,12 @@ final class DeliveryOption extends AModel
      * @var string
      */
     protected ?string $labelType = null;
+
+    /**
+     * The display name of the shipping label.
+     * @var string
+     */
+    protected string $labelDisplayName;
 
     protected LabelPrice $labelPrice;
 

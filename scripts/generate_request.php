@@ -403,13 +403,13 @@ class GenerateMap
 require(dirname(__DIR__) . "/vendor/autoload.php");
 
 $class = new GenerateMap(
-    dirname(__DIR__) . "/resources/v5.json",
+    dirname(__DIR__) . "/resources/v7-shared.json",
     dirname(__DIR__) . "/resources/methods.json"
 );
 
 $text = $class->generate();
 
-file_put_contents(dirname(__DIR__) . "/src/Request.php", <<<PHP
+file_put_contents(dirname(__DIR__) . "/src/Request2.php", <<<PHP
 <?php
 
 namespace HarmSmits\BolComClient;

@@ -2,6 +2,8 @@
 
 namespace HarmSmits\BolComClient\Models;
 
+use \DateTime;
+
 /**
  * @method null|string getOrderItemId()
  * @method self setOrderItemId(string $orderItemId)
@@ -10,11 +12,11 @@ namespace HarmSmits\BolComClient\Models;
  */
 final class CreateReturnRequest extends AModel
 {
-    const HANDLING_RESULT_RETURN_RECEIVED = 'RETURN_RECEIVED';
-    const HANDLING_RESULT_EXCHANGE_PRODUCT = 'EXCHANGE_PRODUCT';
-    const HANDLING_RESULT_RETURN_DOES_NOT_MEET_CONDITIONS = 'RETURN_DOES_NOT_MEET_CONDITIONS';
-    const HANDLING_RESULT_REPAIR_PRODUCT = 'REPAIR_PRODUCT';
-    const HANDLING_RESULT_CUSTOMER_KEEPS_PRODUCT_PAID = 'CUSTOMER_KEEPS_PRODUCT_PAID';
+    public const HANDLING_RESULT_RETURN_RECEIVED = 'RETURN_RECEIVED';
+    public const HANDLING_RESULT_EXCHANGE_PRODUCT = 'EXCHANGE_PRODUCT';
+    public const HANDLING_RESULT_RETURN_DOES_NOT_MEET_CONDITIONS = 'RETURN_DOES_NOT_MEET_CONDITIONS';
+    public const HANDLING_RESULT_REPAIR_PRODUCT = 'REPAIR_PRODUCT';
+    public const HANDLING_RESULT_CUSTOMER_KEEPS_PRODUCT_PAID = 'CUSTOMER_KEEPS_PRODUCT_PAID';
 
     /**
      * The id for the order item (1 order can have multiple order items).

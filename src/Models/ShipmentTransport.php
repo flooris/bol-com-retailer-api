@@ -11,6 +11,7 @@ namespace HarmSmits\BolComClient\Models;
  * @method self setTrackAndTrace(string $trackAndTrace)
  * @method null|string getShippingLabelId()
  * @method self setShippingLabelId(string $shippingLabelId)
+ * @method null|array getTransportEvents()
  */
 final class ShipmentTransport extends AModel
 {
@@ -37,4 +38,15 @@ final class ShipmentTransport extends AModel
      * @var string
      */
     protected ?string $shippingLabelId = null;
+
+	/** @var TransportEvent[] */
+	protected array $transportEvents = [];
+
+
+	public function setTransportEvents(array $transportEvents): self
+	{
+		$this->_checkIfPureArray($transportEvents, \HarmSmits\BolComClient\Models\TransportEvent::class);
+		$this->transportEvents = $transportEvents;
+		return $this;
+	}
 }

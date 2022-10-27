@@ -2,7 +2,7 @@
 
 namespace HarmSmits\BolComClient\Models;
 
-use DateTime;
+use \DateTime;
 
 /**
  * @method null|string getProcessStatusId()
@@ -17,97 +17,90 @@ use DateTime;
  * @method null|string getErrorMessage()
  * @method self setErrorMessage(string $errorMessage)
  * @method null|DateTime getCreateTimestamp()
- * @method Link[] getLinks()
+ * @method null|array getLinks()
  */
-final class ProcessStatus extends AModel
+final class ProcessStatus extends \HarmSmits\BolComClient\Models\AModel
 {
-    const STATUS_PENDING = 'PENDING';
-    const STATUS_SUCCESS = 'SUCCESS';
-    const STATUS_FAILURE = 'FAILURE';
-    const STATUS_TIMEOUT = 'TIMEOUT';
+	public const STATUS_PENDING = 'PENDING';
+	public const STATUS_SUCCESS = 'SUCCESS';
+	public const STATUS_FAILURE = 'FAILURE';
+	public const STATUS_TIMEOUT = 'TIMEOUT';
 
-    /**
-     * The process status id.
-     * @var string
-     */
-    protected ?string $processStatusId = null;
+	/**
+	 * The process status id.
+	 * @var string
+	 */
+	protected ?string $processStatusId = null;
 
-    /**
-     * The id of the object being processed. E.g. in case of a shipment process id, you will receive the id of the
-     * order item being processed.
-     * @var string
-     */
-    protected ?string $entityId = null;
+	/**
+	 * The id of the object being processed. For example, in case of a shipment process id, you will receive the id of the
+	 * order item being processed.
+	 * @var string
+	 */
+	protected ?string $entityId = null;
 
-    /**
-     * Name of the requested action that is being processed.
-     * @var string
-     */
-    protected string $eventType;
+	/**
+	 * Name of the requested action that is being processed.
+	 * @var string
+	 */
+	protected string $eventType;
 
-    /**
-     * Describes the action that is being processed.
-     * @var string
-     */
-    protected string $description;
+	/**
+	 * Describes the action that is being processed.
+	 * @var string
+	 */
+	protected string $description;
 
-    /**
-     * Status of the action being processed.
-     * @var string
-     */
-    protected string $status;
+	/**
+	 * Status of the action being processed.
+	 * @var string
+	 */
+	protected string $status;
 
-    /**
-     * Shows error message if applicable.
-     * @var string
-     */
-    protected ?string $errorMessage = null;
+	/**
+	 * Shows error message if applicable.
+	 * @var string
+	 */
+	protected ?string $errorMessage = null;
 
-    /**
-     * Time of creation of the response.
-     * @var DateTime
-     */
-    protected DateTime $createTimestamp;
+	/**
+	 * Time of creation of the response.
+	 * @var DateTime
+	 */
+	protected DateTime $createTimestamp;
 
-    /**
-     * Lists available actions applicable to this endpoint.
-     * @var Link[]
-     */
-    protected array $links = [];
+	/**
+	 * Lists available actions applicable to this endpoint.
+	 * @var Link[]
+	 */
+	protected array $links = [];
 
-    public function setStatus(string $status): self
-    {
-        $this->_checkEnumBounds($status, [
-            "PENDING",
-            "SUCCESS",
-            "FAILURE",
-            "TIMEOUT",
-        ]);
-        $this->status = $status;
-        return $this;
-    }
 
-    /**
-     * @param DateTime|string|int $createTimestamp
-     *
-     * @return $this
-     */
-    public function setCreateTimestamp($createTimestamp): self
-    {
-        $createTimestamp       = $this->_parseDate($createTimestamp);
-        $this->createTimestamp = $createTimestamp;
-        return $this;
-    }
+	public function setStatus(string $status): self
+	{
+		$this->_checkEnumBounds($status, [
+			"PENDING",
+			"SUCCESS",
+			"FAILURE",
+			"TIMEOUT"
+		]);
+		$this->status = $status;
+		return $this;
+	}
 
-    /**
-     * @param Link[] $links
-     *
-     * @return $this
-     */
-    public function setLinks(array $links): self
-    {
-        $this->_checkIfPureArray($links, Link::class);
-        $this->links = $links;
-        return $this;
-    }
+
+	public function setCreateTimestamp($createTimestamp): self
+	{
+		$createTimestamp = $this->_parseDate($createTimestamp);
+		$this->createTimestamp = $createTimestamp;
+		return $this;
+	}
+
+
+	public function setLinks(array $links): self
+	{
+		$this->_checkIfPureArray($links, \HarmSmits\BolComClient\Models\Link::class);
+		$this->links = $links;
+		return $this;
+	}
 }
