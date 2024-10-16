@@ -50,8 +50,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -116,7 +116,7 @@ class Request
         $data["query"]["condition"]  = $condition;
         $data["query"]["unit-price"] = $unitPrice;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                    = [
             200 =>
@@ -171,8 +171,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -215,7 +215,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{upload-id}", $uploadId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -276,7 +276,7 @@ class Request
         $data["query"]["number-of-periods"] = $numberOfPeriods;
         $data["query"]["name"]              = $name;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                           = [
             200 =>
@@ -346,7 +346,7 @@ class Request
         $data["query"]["year"] = $year;
         $data["query"]["week"] = $week;
         $data["headers"]       = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response              = [
             200 =>
@@ -413,7 +413,7 @@ class Request
         $data["query"]["offer-id"]    = $offerId;
         $data["query"]["weeks-ahead"] = $weeksAhead;
         $data["headers"]              = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                     = [
             200 =>
@@ -485,7 +485,7 @@ class Request
         $data["query"]["number-of-periods"]    = $numberOfPeriods;
         $data["query"]["related-search-terms"] = $relatedSearchTerms;
         $data["headers"]                       = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                              = [
             200 =>
@@ -566,7 +566,7 @@ class Request
         $data["query"]["state"]    = $state;
         $data["query"]["query"]    = $query;
         $data["headers"]           = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                  = [
             200 =>
@@ -617,7 +617,7 @@ class Request
         $data["query"]["period-start-date"] = $periodStartDate;
         $data["query"]["period-end-date"]   = $periodEndDate;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                           = [
             400 =>
@@ -652,7 +652,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{invoice-id}", $invoiceId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             400 =>
@@ -690,7 +690,7 @@ class Request
         $data["query"]         = [];
         $data["query"]["page"] = $page;
         $data["headers"]       = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response              = [
             400 =>
@@ -736,8 +736,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -782,8 +782,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -826,7 +826,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{report-id}", $reportId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+csv',
+            'Accept' => 'application/vnd.retailer.v10+csv',
         ];
         $response        = [
             400 =>
@@ -869,7 +869,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -951,8 +951,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -995,7 +995,7 @@ class Request
         $method          = "delete";
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1042,8 +1042,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1090,8 +1090,8 @@ class Request
         $url             = str_replace("{offer-id}", $offerId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1141,7 +1141,7 @@ class Request
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["query"]["status"]            = $status;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                           = [
             200 =>
@@ -1182,8 +1182,8 @@ class Request
         $method          = "put";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1227,12 +1227,12 @@ class Request
     public function updateShipment(ShipmentRequest $body): array
     {
         $data            = [];
-        $url             = "https://api.bol.com/retailer/orders/shipment";
-        $method          = "put";
+        $url             = "https://api.bol.com/retailer/shipments";
+        $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1276,7 +1276,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{order-id}", $orderId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -1352,7 +1352,7 @@ class Request
         $data["query"]["promotion-type"] = $promotionType;
         $data["query"]["page"]           = $page;
         $data["headers"]                 = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                        = [
             200 =>
@@ -1405,7 +1405,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{promotion-id}", $promotionId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -1466,7 +1466,7 @@ class Request
         $data["query"]         = [];
         $data["query"]["page"] = $page;
         $data["headers"]       = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response              = [
             200 =>
@@ -1532,7 +1532,7 @@ class Request
         $data["query"]["state"]      = $state;
         $data["query"]["page"]       = $page;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                    = [
             200 =>
@@ -1587,8 +1587,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1629,7 +1629,7 @@ class Request
         $url             = "https://api.bol.com/retailer/replenishments/delivery-dates";
         $method          = "get";
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -1669,8 +1669,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -1715,8 +1715,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+pdf',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+pdf',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             400 =>
@@ -1759,7 +1759,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -1859,8 +1859,8 @@ class Request
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -1909,7 +1909,7 @@ class Request
         $data["query"]               = [];
         $data["query"]["label-type"] = $labelType;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v7+pdf',
+            'Accept' => 'application/vnd.retailer.v10+pdf',
         ];
         $response                    = [
             400 =>
@@ -1952,7 +1952,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{replenishment-id}", $replenishmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+pdf',
+            'Accept' => 'application/vnd.retailer.v10+pdf',
         ];
         $response        = [
             400 =>
@@ -2003,7 +2003,7 @@ class Request
         $data["query"]["handled"]           = $handled;
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                           = [
             200 =>
@@ -2064,7 +2064,7 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2107,7 +2107,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{return-id}", $returnId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2170,8 +2170,8 @@ class Request
         $url             = str_replace("{rma-id}", $rmaId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2222,7 +2222,7 @@ class Request
         $data["query"]["fulfilment-method"] = $fulfilmentMethod;
         $data["query"]["order-id"]          = $orderId;
         $data["headers"]                    = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                           = [
             200 =>
@@ -2280,7 +2280,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{shipment-id}", $shipmentId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2365,8 +2365,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2412,8 +2412,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2483,7 +2483,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{shipping-label-id}", $shippingLabelId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+pdf',
+            'Accept' => 'application/vnd.retailer.v10+pdf',
         ];
         $response        = [
             400 =>
@@ -2524,7 +2524,7 @@ class Request
         $url             = "https://api.bol.com/retailer/subscriptions";
         $method          = "get";
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2570,8 +2570,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2613,7 +2613,7 @@ class Request
         $url             = "https://api.bol.com/retailer/subscriptions/signature-keys";
         $method          = "get";
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2646,8 +2646,8 @@ class Request
         $method          = "post";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2690,7 +2690,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -2746,8 +2746,8 @@ class Request
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2790,8 +2790,8 @@ class Request
         $method          = "delete";
         $url             = str_replace("{subscription-id}", $subscriptionId, $url);
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2839,8 +2839,8 @@ class Request
         $url             = str_replace("{transport-id}", $transportId, $url);
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             202 =>
@@ -2893,7 +2893,7 @@ class Request
         $data["query"]["event-type"] = $eventType;
         $data["query"]["page"]       = $page;
         $data["headers"]             = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response                    = [
             200 =>
@@ -2946,8 +2946,8 @@ class Request
         $method          = "post";
         $data["body"]    = json_encode($body->__toArray());
         $data["headers"] = [
-            'Accept'       => 'application/vnd.retailer.v7+json',
-            'Content-Type' => 'application/vnd.retailer.v7+json',
+            'Accept'       => 'application/vnd.retailer.v10+json',
+            'Content-Type' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
@@ -3001,7 +3001,7 @@ class Request
         $method          = "get";
         $url             = str_replace("{process-status-id}", $processStatusId, $url);
         $data["headers"] = [
-            'Accept' => 'application/vnd.retailer.v7+json',
+            'Accept' => 'application/vnd.retailer.v10+json',
         ];
         $response        = [
             200 =>
